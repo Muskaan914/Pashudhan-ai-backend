@@ -1,7 +1,7 @@
 django
 django-cors-headers
 gunicorn
-tensorflow
+tensorflow-cpu
 Pillow
 numpy
 anthropic
