@@ -1,0 +1,13 @@
+@"
+.venv/
+.venv-1/
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+milk_data.json
+*.dll
+*.exe
+*.zip
+node_modules/
+"@ | Out-File -FilePath .gitignore -Encoding utf8
