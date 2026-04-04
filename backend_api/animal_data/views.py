@@ -59,7 +59,7 @@ def analyze_symptoms(request):
         client = anthropic.Anthropic(api_key=api_key)
 
         msg = client.messages.create(
-            model="claude-opus-4-5",
+            model="claude-haiku-4-5-20251001",
             max_tokens=600,
             system="""You are an expert AI veterinarian for Indian livestock.
 Respond ONLY with a JSON object, no markdown:

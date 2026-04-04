@@ -1,5 +1,5 @@
 """
-ml_model/predictor.py — uses Claude Vision API (no TensorFlow needed)
+ml_model/predictor.py — uses Claude Vision API (fast Haiku model)
 """
 
 import io
@@ -17,24 +17,23 @@ def _get_client():
     if _client is None:
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY not set in environment variables")
+            raise ValueError("ANTHROPIC_API_KEY not set")
         _client = anthropic.Anthropic(api_key=api_key)
     return _client
 
 
 def predict(image_bytes: bytes) -> dict:
-    # Resize image to reduce API payload
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     image = image.resize((512, 512))
     buffer = io.BytesIO()
-    image.save(buffer, format="JPEG")
+    image.save(buffer, format="JPEG", quality=85)
     img_b64 = base64.standard_b64encode(buffer.getvalue()).decode("utf-8")
 
     client = _get_client()
 
     message = client.messages.create(
-        model="claude-opus-4-5",
-        max_tokens=300,
+        model="claude-haiku-4-5-20251001",   # ← fast model, no timeout
+        max_tokens=200,
         messages=[
             {
                 "role": "user",
@@ -49,21 +48,14 @@ def predict(image_bytes: bytes) -> dict:
                     },
                     {
                         "type": "text",
-                        "text": """Analyze this livestock image. Respond ONLY with a JSON object, no markdown:
-{
-  "breed": "detected breed name or Cow or Buffalo or Unknown",
-  "confidence": 90,
-  "health_status": "Healthy or Unhealthy",
-  "health_details": "brief observation about coat, body condition, visible issues"
-}"""
+                        "text": 'Analyze this livestock image. Reply ONLY with JSON, no markdown:\n{"breed": "breed name", "confidence": 90, "health_status": "Healthy", "health_details": "brief observation"}'
                     }
                 ],
             }
         ],
     )
 
-    raw = message.content[0].text.strip()
-    raw = raw.replace("```json", "").replace("```", "").strip()
+    raw = message.content[0].text.strip().replace("```json", "").replace("```", "").strip()
 
     try:
         result = json.loads(raw)
@@ -80,5 +72,3 @@ def predict(image_bytes: bytes) -> dict:
             "health_status":  "Unknown",
             "health_details": raw,
         }
-    
-    
