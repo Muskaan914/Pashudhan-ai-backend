@@ -32,7 +32,7 @@ def predict(image_bytes: bytes) -> dict:
     client = _get_client()
 
     message = client.messages.create(
-        model="claude-haiku-4-5-20251001",   # ← fast model, no timeout
+        model="claude-sonnet-4-6",  # ← fast model, no timeout
         max_tokens=200,
         messages=[
             {
