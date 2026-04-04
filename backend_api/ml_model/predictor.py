@@ -48,8 +48,7 @@ def predict(image_bytes: bytes) -> dict:
                     },
                     {
                         "type": "text",
-                        "text": 'Analyze this livestock image. Reply ONLY with JSON, no markdown:\n{"breed": "breed name", "confidence": 90, "health_status": "Healthy", "health_details": "brief observation"}'
-                    }
+                        "text": 'You are a livestock expert. Look at this image carefully. Is it a cow or buffalo? What specific breed? Reply ONLY with JSON, no markdown, no extra text:\n{"breed": "exact breed name like Holstein Friesian or Gir Cow or Sahiwal or Murrah Buffalo", "confidence": 85, "health_status": "Healthy or Unhealthy", "health_details": "one sentence about coat and body condition"}'
                 ],
             }
         ],
